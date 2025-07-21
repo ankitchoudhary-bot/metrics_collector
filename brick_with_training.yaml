@@ -115,7 +115,20 @@ implementation:
                                     ],
                                     "resources": {
                                         "limits": {"cpu": "2", "memory": "4Gi"}
-                                    }
+                                    },
+
+                                     "volumeMounts": [
+                                        {
+                                            "name": "metrics-volume",
+                                            "mountPath": "/var/log/katib"   # This should match where your training script writes metrics
+                                        }
+                                    ]
+                                }
+                            ],
+                            "volumes": [
+                                {
+                                    "name": "metrics-volume",
+                                    "emptyDir": {}
                                 }
                             ],
                             "restartPolicy": "Never"
