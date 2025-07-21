@@ -77,7 +77,7 @@ implementation:
 
         # Define Katib Experiment Spec
         experiment_name = f"katib-{model_type}-tuning"
-        namespace = "kubeflow"
+        namespace = "admin"
 
         # Define objective metric and goal
         objective_spec = V1beta1ObjectiveSpec(
