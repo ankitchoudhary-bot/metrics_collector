@@ -72,7 +72,7 @@ implementation:
         # Metrics collector spec
         metrics_collector= V1beta1MetricsCollectorSpec(
             collector=V1beta1CollectorSpec(kind="File"),
-            source=V1beta1FileSystemPath(path="/var/log/katib/metrics.log", kind="File",format="JSON")
+            source=V1beta1FileSystemPath(path="/output/metrics.log", kind="File",format="JSON")
         )
 
         # Define Katib Experiment Spec
