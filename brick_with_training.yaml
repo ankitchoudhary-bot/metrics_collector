@@ -76,7 +76,7 @@ implementation:
         # )
         metrics_collector = V1beta1MetricsCollectorSpec(
             collector=V1beta1CollectorSpec(kind="File"),
-            source=V1beta1FileSystemPath(path="/var/log/katib/metrics.log", kind="File")
+            source=V1beta1FileSystemPath(path="/tmp/metrics.log", kind="File")
         )
 
 
