@@ -69,11 +69,16 @@ implementation:
         if model_type not in search_spaces:
             raise ValueError(f"Unsupported model type: {model_type}")
 
-        # Metrics collector spec
-        metrics_collector= V1beta1MetricsCollectorSpec(
+        # # Metrics collector spec
+        # metrics_collector= V1beta1MetricsCollectorSpec(
+        #     collector=V1beta1CollectorSpec(kind="File"),
+        #     source=V1beta1FileSystemPath(path="/output/metrics.log", kind="File",format="JSON")
+        # )
+        metrics_collector = V1beta1MetricsCollectorSpec(
             collector=V1beta1CollectorSpec(kind="File"),
-            source=V1beta1FileSystemPath(path="/output/metrics.log", kind="File",format="JSON")
+            source=V1beta1FileSystemPath(path="/var/log/katib/metrics.log", kind="File")
         )
+
 
         # Define Katib Experiment Spec
         experiment_name = f"katib-{model_type}-tuning"
