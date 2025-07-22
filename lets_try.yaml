@@ -1,0 +1,27 @@
+name: Tune Hyperparameters
+description: Generic hyperparameter tuning using Katib for a given model type.
+
+inputs:
+  - name: model_type
+    type: String
+    description: "Choose one of ['sklearn', 'xgboost', 'pytorch']"
+
+outputs:
+  - name: best_hyperparams
+    type: File
+
+implementation:
+  container:
+    image: ankitdockerhubprofile/katib-ff-whole-dockerimage:latest
+    command:
+      - python3
+      - run.py
+    args:
+      - --model_type
+      - {inputValue: model_type}
+      - --best_hyperparams
+      - {outputPath: best_hyperparams}
+ 
+
+    
+

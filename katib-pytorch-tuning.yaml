@@ -1,0 +1,73 @@
+apiVersion: kubeflow.org/v1beta1
+kind: Experiment
+metadata:
+  name: katib-pytorch-tuning
+  namespace: kubeflow
+spec:
+  objective:
+    type: maximize
+    goal: 0.99
+    objectiveMetricName: accuracy
+
+  algorithm:
+    algorithmName: tpe
+
+  earlyStopping:
+    algorithmName: medianstop
+
+  parameters:
+    - name: lr
+      parameterType: double
+      feasibleSpace:
+        min: "0.0001"
+        max: "0.1"
+    - name: threshold
+      parameterType: double
+      feasibleSpace:
+        min: "0.5"
+        max: "4"
+
+  trialTemplate:
+    retain: true
+    primaryContainerName: training-container
+    trialParameters:
+      - name: lr
+        description: Learning rate
+        reference: lr
+      - name: threshold
+        description: Threshold value
+        reference: threshold
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: training-container
+                image: ankitdockerhubprofile/katib-ff-whole:latest
+                command:
+                  - python
+                  - objective_fn.py
+                args:
+                  - --lr
+                  - "${trialParameters.lr}"
+                  - --threshold
+                  - "${trialParameters.threshold}"
+                resources:
+                  limits:
+                    cpu: "2"
+                    memory: "4Gi"
+            restartPolicy: Never
+
+  metricsCollectorSpec:
+    collector:
+      kind: File
+    source:
+      fileSystemPath:
+        path: /var/log/katib/metrics.log
+        kind: File
+
+  maxTrialCount: 4
+  parallelTrialCount: 2
+  maxFailedTrialCount: 2
