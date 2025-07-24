@@ -8,24 +8,24 @@ spec:
     type: maximize
     goal: 0.99
     objectiveMetricName: accuracy
+    metricStrategies:
+    - name: accuracy
+      value: max
 
   algorithm:
-    algorithmName: tpe
-
-  earlyStopping:
-    algorithmName: medianstop
+    algorithmName: random
 
   parameters:
     - name: lr
       parameterType: double
       feasibleSpace:
-        min: "0.0001"
+        min: "0.001"
         max: "0.1"
     - name: threshold
       parameterType: double
       feasibleSpace:
-        min: "0.5"
-        max: "4"
+        min: "0.4"
+        max: "0.9"
 
   trialTemplate:
     retain: true
@@ -35,7 +35,7 @@ spec:
         description: Learning rate
         reference: lr
       - name: threshold
-        description: Threshold value
+        description: Threshold
         reference: threshold
     trialSpec:
       apiVersion: batch/v1
@@ -47,19 +47,17 @@ spec:
               - name: training-container
                 image: ankitdockerhubprofile/katib-ff-whole:latest
                 command:
-                  - python
-                  - objective_fn.py
-                args:
-                  - --lr
-                  - "${trialParameters.lr}"
-                  - --threshold
-                  - "${trialParameters.threshold}"
-                resources:
-                  limits:
-                    cpu: "2"
-                    memory: "4Gi"
+                  - "python3"
+                  - "/app/objective_fn.py"
+                  - "--lr=${trialParameters.lr}"
+                  - "--threshold=${trialParameters.threshold}"
+                volumeMounts:
+                  - name: log-volume
+                    mountPath: /var/log/katib
             restartPolicy: Never
-
+            volumes:
+              - name: log-volume
+                emptyDir: {}
   metricsCollectorSpec:
     collector:
       kind: File
@@ -67,7 +65,4 @@ spec:
       fileSystemPath:
         path: /var/log/katib/metrics.log
         kind: File
-
-  maxTrialCount: 4
-  parallelTrialCount: 2
-  maxFailedTrialCount: 2
+        format: JSON

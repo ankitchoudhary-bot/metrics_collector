@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir \
 
 # Copy training script
 COPY objective_fn.py .
+COPY run.py .
 
 
 # Default command for Katib trial execution
-ENTRYPOINT ["python", "objective_fn.py"]
-
+ENTRYPOINT ["python", "run.py"]
