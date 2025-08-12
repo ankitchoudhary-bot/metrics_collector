@@ -74,7 +74,7 @@ implementation:
         metrics_collector = V1beta1MetricsCollectorSpec(
             source={
                 "fileSystemPath": V1beta1FileSystemPath(
-                    path="/var/log/katib/metrics.log",          #"/output/metrics.log
+                    path="/katib/mnist.json",          #"/output/metrics.log
                     kind="File",          # use string
                     format="JSON"         # use string
                 )
