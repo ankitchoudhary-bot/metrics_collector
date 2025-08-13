@@ -41,7 +41,7 @@ implementation:
         # Load K8s config
         try:
             config.load_incluster_config()
-        except config.ConfigException:
+        except:
             config.load_kube_config()
 
 
