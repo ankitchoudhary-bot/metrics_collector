@@ -8,7 +8,7 @@ outputs:
 
 implementation:
   container:
-    image: ankitdockerhubprofile/gnns_tgcn_image:latest
+    image: ankitdockerhubprofile/katib-ff-whole:latest
     command:
       - python3
       - -u
