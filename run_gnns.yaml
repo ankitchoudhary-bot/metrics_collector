@@ -70,15 +70,16 @@ implementation:
                 parameter_type="double",
                 feasible_space={"min": "0.0001", "max": "0.1"}
             ),
-            # V1beta1ParameterSpec(
-            #     name="hidden_dim",
-            #     parameter_type="int",
-            #     feasible_space={"min": "16", "max": "128"}
             V1beta1ParameterSpec(
-            name="hidden_dim",
-            parameter_type="categorical",
-            feasible_space={"list": ["16", "32", "64", "128"]}
+                name="hidden_dim",
+                parameter_type="int",
+                feasible_space={"min": "16", "max": "128"}
             ),
+            # V1beta1ParameterSpec(
+            # name="hidden_dim",
+            # parameter_type="categorical",
+            # feasible_space={"list": ["16", "32", "64", "128"]}
+            # ),
             V1beta1ParameterSpec(
                 name="dropout",
                 parameter_type="double",
