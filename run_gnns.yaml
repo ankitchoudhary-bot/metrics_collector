@@ -53,7 +53,7 @@ implementation:
         )
 
         experiment_name = "katib-gnns-tuning-json"
-        namespace = "kubeflow"
+        namespace = "admin"
 
         objective_spec = V1beta1ObjectiveSpec(
             type="maximize",
