@@ -1,0 +1,158 @@
+name: Katib GNNS Tuner
+description: Launches a Katib experiment for GNNS using a predefined objective function.
+
+outputs:
+  - name: best_hyperparams
+    type: JsonArray
+    description: Best parameter set found by Katib
+
+implementation:
+  container:
+    image: ankitdockerhubprofile/gnns_tgcn_image:latest
+    command:
+      - python3
+      - -u
+      - -c
+      - |
+        import argparse
+        import json
+        import os
+        from kubernetes import client, config
+        import kubeflow.katib as katib
+        from kubeflow.katib import (
+            V1beta1AlgorithmSpec,
+            V1beta1Experiment,
+            V1beta1ExperimentSpec,
+            V1beta1ObjectiveSpec,
+            V1beta1ParameterSpec,
+            V1beta1EarlyStoppingSpec,
+            V1beta1TrialTemplate,
+            V1beta1MetricsCollectorSpec,
+            V1beta1FileSystemPath,
+        )
+
+        # Load K8s config
+        try:
+            config.load_incluster_config()
+        except:
+            config.load_kube_config()
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--best_hyperparams", type=str, required=True)
+        args = parser.parse_args()
+
+        metrics_collector = V1beta1MetricsCollectorSpec(
+            source={
+                "fileSystemPath": V1beta1FileSystemPath(
+                    path="/katib/mnist.json",
+                    kind="File",
+                    format="JSON"
+                )
+            },
+            collector={"kind": "File"}
+        )
+
+        experiment_name = "katib-gnns-tuning-json"
+        namespace = "kubeflow"
+
+        objective_spec = V1beta1ObjectiveSpec(
+            type="maximize",
+            goal=0.99,
+            objective_metric_name="accuracy"
+        )
+
+        algorithm_spec = V1beta1AlgorithmSpec(algorithm_name="tpe")
+        early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name="medianstop")
+
+        parameters = [
+            V1beta1ParameterSpec(
+                name="learning_rate",
+                parameter_type="double",
+                feasible_space={"min": "0.0001", "max": "0.1"}
+            ),
+            V1beta1ParameterSpec(
+                name="hidden_dim",
+                parameter_type="int",
+                feasible_space={"min": "16", "max": "128"}
+            ),
+            V1beta1ParameterSpec(
+                name="dropout",
+                parameter_type="double",
+                feasible_space={"min": "0.1", "max": "0.5"}
+            )
+        ]
+
+        trial_template = V1beta1TrialTemplate(
+            retain=True,
+            primary_container_name="training-container",
+            trial_parameters=[
+                {"name": "learning_rate", "description": "Learning rate", "reference": "learning_rate"},
+                {"name": "hidden_dim", "description": "Hidden dimension", "reference": "hidden_dim"},
+                {"name": "dropout", "description": "Dropout rate", "reference": "dropout"},
+            ],
+            trial_spec={
+                "apiVersion": "batch/v1",
+                "kind": "Job",
+                "spec": {
+                    "ttlSecondsAfterFinished": 86400,
+                    "template": {
+                        "spec": {
+                            "containers": [
+                                {
+                                    "name": "training-container",
+                                    "image": "ankitdockerhubprofile/gnns_tgcn_image:latest",
+                                    "command": ["python", "train_model.py"],
+                                    "args": [
+                                        "--learning_rate", "${trialParameters.learning_rate}",
+                                        "--hidden_dim", "${trialParameters.hidden_dim}",
+                                        "--dropout", "${trialParameters.dropout}"
+                                    ],
+                                    "resources": {
+                                        "limits": {"cpu": "0.5", "memory": "2Gi"}
+                                    }
+                                }
+                            ],
+                            "restartPolicy": "Never"
+                        }
+                    }
+                }
+            }
+        )
+
+        experiment_spec = V1beta1ExperimentSpec(
+            objective=objective_spec,
+            algorithm=algorithm_spec,
+            parameters=parameters,
+            trial_template=trial_template,
+            metrics_collector_spec=metrics_collector,
+            max_trial_count=4,
+            parallel_trial_count=2,
+            max_failed_trial_count=2,
+            early_stopping=early_stopping_spec
+        )
+
+        katib_client = katib.KatibClient(namespace=namespace)
+        experiment = V1beta1Experiment(
+            api_version="kubeflow.org/v1beta1",
+            kind="Experiment",
+            metadata=client.V1ObjectMeta(name=experiment_name, namespace=namespace),
+            spec=experiment_spec
+        )
+
+        katib_client.create_experiment(experiment)
+        katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
+
+        best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
+        params = best.parameter_assignments
+        hp_dict = {p.name: float(p.value) for p in params}
+        print("Best Hyperparameters Found:", hp_dict)
+
+        dir_path = os.path.dirname(args.best_hyperparams)
+        if dir_path:
+            os.makedirs(dir_path, exist_ok=True)
+
+        with open(args.best_hyperparams, "w") as f:
+            json.dump(hp_dict, f, indent=2)
+    args:
+      - --best_hyperparams
+      - {outputPath: best_hyperparams}
