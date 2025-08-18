@@ -3,7 +3,7 @@ description: Launches a Katib experiment for GNNS using a predefined objective f
 
 inputs:
   - name: parameters_to_tune
-    type: String
+    type: Dataset
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
 
   - name: objective_metric_name
@@ -53,7 +53,10 @@ implementation:
         args = parser.parse_args()
 
         # Parse input parameters to tune
-        params_input = json.loads(args.parameters_to_tune)
+        # params_input = json.loads(args.parameters_to_tune)
+        with open(args.parameters_to_tune, "r") as f:
+          params_input = json.load(f)
+
         parameters = [
             V1beta1ParameterSpec(
                 name=p["name"],
@@ -163,7 +166,7 @@ implementation:
             json.dump(hp_dict, f, indent=2)
     args:
       - --parameters_to_tune
-      - {inputValue: parameters_to_tune}
+      - {inputPath: parameters_to_tune}
       - --objective_metric_name
       - {inputValue: objective_metric_name}
       - --best_hyperparams
