@@ -30,7 +30,7 @@ inputs:
 
   - name: max_trial_count 
     type: String
-    # default: 4
+    default: 4
     description: Maximum number of trials
 
   # - name: parallel_trial_count
