@@ -29,17 +29,17 @@ inputs:
     description: Early stopping algorithm for Katib (e.g., medianstop, truncation, none)
 
   - name: max_trial_count 
-    type: String
+    type: Integer
     default: 4
     description: Maximum number of trials
 
   - name: parallel_trial_count
-    type: String
+    type: Integer
     default: 2
     description: Number of trials to run in parallel
 
   - name: max_failed_trial_count
-    type: String
+    type: Integer
     default: 2
     description: Maximum number of failed trials
 
@@ -50,7 +50,7 @@ outputs:
 
 implementation:
   container:
-    image: ankitdockerhubprofile/gnns_tgcn_image:latest                                           #ankitdockerhubprofile/katib-ff-whole:latest
+    image: ankitdockerhubprofile/gnns_tgcn_image:latest
     command:
       - python3
       - -u
