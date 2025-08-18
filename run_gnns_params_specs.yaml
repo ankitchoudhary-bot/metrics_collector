@@ -10,6 +10,25 @@ inputs:
     type: String
     description: Metric name Katib will optimize (e.g., accuracy, f1_score, roc_auc)
 
+  - name: objective_type
+    type: String
+    description: Objective type for Katib optimization (e.g., maximize, minimize)
+
+  - name: objective_goal
+    type: Float
+    description: Target goal value for the metric (e.g., 0.99)
+    
+  - name: algorithm_name
+    type: String
+    default: "tpe"
+    description: Search algorithm for Katib. Options: [random, grid, tpe, bayesianoptimization, hyperband]
+
+  - name: early_stopping_algorithm
+    type: String
+    default: "medianstop"
+    description: Early stopping algorithm for Katib. Options: [medianstop, truncation, none]
+
+
 outputs:
   - name: best_hyperparams
     type: JsonArray
@@ -50,13 +69,14 @@ implementation:
         parser.add_argument("--best_hyperparams", type=str, required=True)
         parser.add_argument("--parameters_to_tune", type=str, required=True)
         parser.add_argument("--objective_metric_name", type=str, required=True)
+        parser.add_argument("--objective_type", type=str, required=True)
+        parser.add_argument("--objective_goal", type=float, required=True)
+        parser.add_argument("--algorithm_name", type=str, required=True)
+        parser.add_argument("--early_stopping_algorithm", type=str, required=True)
+
         args = parser.parse_args()
 
         # Parse input parameters to tune
-        # params_input = json.loads(args.parameters_to_tune)
-        # with open(args.parameters_to_tune, "r") as f:
-        #   params_input = json.load(f)
-        # Parse input parameters to tune (as JSON string)
         params_input = json.loads(args.parameters_to_tune)
 
 
@@ -84,13 +104,13 @@ implementation:
         namespace = "admin"
 
         objective_spec = V1beta1ObjectiveSpec(
-            type="maximize",
-            goal=0.99,
+            type=args.objective_type,
+            goal=args.objective_goal,
             objective_metric_name=args.objective_metric_name
         )
 
-        algorithm_spec = V1beta1AlgorithmSpec(algorithm_name="tpe")
-        early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name="medianstop")
+        algorithm_spec = V1beta1AlgorithmSpec(algorithm_name=args.algorithm_name)
+        early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name=args.early_stopping_algorithm)
 
         # Dynamic trial template parameters
         trial_template = V1beta1TrialTemplate(
