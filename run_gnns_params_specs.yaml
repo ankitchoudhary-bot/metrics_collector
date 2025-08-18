@@ -28,10 +28,10 @@ inputs:
     default: medianstop
     description: Early stopping algorithm for Katib (e.g., medianstop, truncation, none)
 
-  # - name: max_trial_count 
-  #   type: String
-  #   default: 4
-  #   description: Maximum number of trials
+  - name: max_trial_count 
+    type: Integer
+    default: 4
+    description: Maximum number of trials
 
   # - name: parallel_trial_count
   #   type: String
