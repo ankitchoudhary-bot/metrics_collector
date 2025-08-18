@@ -166,7 +166,7 @@ implementation:
             json.dump(hp_dict, f, indent=2)
     args:
       - --parameters_to_tune
-      - {inputPath: parameters_to_tune}
+      - {inputValue: parameters_to_tune}
       - --objective_metric_name
       - {inputValue: objective_metric_name}
       - --best_hyperparams
