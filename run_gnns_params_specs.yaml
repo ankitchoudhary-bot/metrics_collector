@@ -43,6 +43,11 @@ inputs:
     default: '2'
     description: Maximum number of failed trials
 
+  - name: experiment_name
+    type: String
+    default: katib-experiment
+    description: Name for the Katib experiment
+
 outputs:
   - name: best_hyperparams
     type: JsonArray
@@ -90,6 +95,7 @@ implementation:
         parser.add_argument("--max_trial_count", type=int, required=True)
         parser.add_argument("--parallel_trial_count", type=int, required=True)
         parser.add_argument("--max_failed_trial_count", type=int, required=True)
+        parser.add_argument("--experiment_name", type=str, required=True)
         
         args = parser.parse_args()
 
@@ -117,7 +123,7 @@ implementation:
             collector={"kind": "File"}
         )
 
-        experiment_name = "katib-gnns-tuning-json"
+        experiment_name = args.experiment_name
         namespace = "admin"
 
         objective_spec = V1beta1ObjectiveSpec(
@@ -205,6 +211,8 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
     args:
+      - --experiment_name
+      - {inputValue: experiment_name}
       - --parameters_to_tune
       - {inputValue: parameters_to_tune}
       - --objective_metric_name
