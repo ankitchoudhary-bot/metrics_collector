@@ -6,6 +6,10 @@ inputs:
     type: JsonArray
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
 
+  - name: objective_metric_name
+    type: String
+    description: Metric name Katib will optimize (e.g., accuracy, f1_score, roc_auc)
+
 outputs:
   - name: best_hyperparams
     type: JsonArray
@@ -45,6 +49,7 @@ implementation:
         parser = argparse.ArgumentParser()
         parser.add_argument("--best_hyperparams", type=str, required=True)
         parser.add_argument("--parameters_to_tune", type=str, required=True)
+        parser.add_argument("--objective_metric_name", type=str, required=True)
         args = parser.parse_args()
 
         # Parse input parameters to tune
@@ -75,7 +80,7 @@ implementation:
         objective_spec = V1beta1ObjectiveSpec(
             type="maximize",
             goal=0.99,
-            objective_metric_name="accuracy"
+            objective_metric_name=args.objective_metric_name
         )
 
         algorithm_spec = V1beta1AlgorithmSpec(algorithm_name="tpe")
