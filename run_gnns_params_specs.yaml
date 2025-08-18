@@ -15,7 +15,7 @@ inputs:
     description: Objective type for Katib optimization (e.g., maximize, minimize)
 
   - name: objective_goal
-    type: Float
+    type: String
     description: Target goal value for the metric (e.g., 0.99)
     
   - name: algorithm_name
