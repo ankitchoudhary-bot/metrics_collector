@@ -33,15 +33,15 @@ inputs:
     default: '4'
     description: Maximum number of trials
 
-  # - name: parallel_trial_count
-  #   type: String
-  #   # default: 2
-  #   description: Number of trials to run in parallel
+  - name: parallel_trial_count
+    type: String
+    default: '2'
+    description: Number of trials to run in parallel
 
-  # - name: max_failed_trial_count
-  #   type: String
-  #   # default: 2
-  #   description: Maximum number of failed trials
+  - name: max_failed_trial_count
+    type: String
+    default: '2'
+    description: Maximum number of failed trials
 
 outputs:
   - name: best_hyperparams
