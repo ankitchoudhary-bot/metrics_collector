@@ -20,12 +20,12 @@ inputs:
     
   - name: algorithm_name
     type: String
-    # default: tpe
+    default: tpe
     description: Search algorithm for Katib ( e.g., random, grid, tpe, bayesianoptimization, hyperband)
 
   - name: early_stopping_algorithm
     type: String
-    # default: medianstop
+    default: medianstop
     description: Early stopping algorithm for Katib (e.g., medianstop, truncation, none)
 
 
