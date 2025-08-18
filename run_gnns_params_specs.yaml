@@ -193,7 +193,7 @@ implementation:
       - --objective_metric_name
       - {inputValue: objective_metric_name}
       - --objective_type
-      - {inputValur: objective_type}
+      - {inputValue: objective_type}
       - --objective_goal
       - {inputValue: objective_goal}
       - --algorithm_name
