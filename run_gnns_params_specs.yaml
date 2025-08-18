@@ -192,5 +192,13 @@ implementation:
       - {inputValue: parameters_to_tune}
       - --objective_metric_name
       - {inputValue: objective_metric_name}
+      - --objective_type
+      - {inputValur: objective_type}
+      - --objective_goal
+      - {inputValue: objective_goal}
+      - --algorithm_name
+      - {inputValue: algorithm_name}
+      - --early_stopping_algorithm
+      - {inputValue: early_stopping_algorithm}
       - --best_hyperparams
       - {outputPath: best_hyperparams}
