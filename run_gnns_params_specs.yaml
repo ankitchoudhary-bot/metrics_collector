@@ -54,8 +54,11 @@ implementation:
 
         # Parse input parameters to tune
         # params_input = json.loads(args.parameters_to_tune)
-        with open(args.parameters_to_tune, "r") as f:
-          params_input = json.load(f)
+        # with open(args.parameters_to_tune, "r") as f:
+        #   params_input = json.load(f)
+        # Parse input parameters to tune (as JSON string)
+        params_input = json.loads(args.parameters_to_tune)
+
 
         parameters = [
             V1beta1ParameterSpec(
