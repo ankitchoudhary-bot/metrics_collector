@@ -87,7 +87,10 @@ implementation:
         parser.add_argument("--objective_goal", type=float, required=True)
         parser.add_argument("--algorithm_name", type=str, required=True)
         parser.add_argument("--early_stopping_algorithm", type=str, required=True)
-
+        parser.add_argument("--max_trial_count", type=int, required=True)
+        parser.add_argument("--parallel_trial_count", type=int, required=True)
+        parser.add_argument("--max_failed_trial_count", type=int, required=True)
+        
         args = parser.parse_args()
 
         # Parse input parameters to tune
@@ -173,9 +176,9 @@ implementation:
             parameters=parameters,
             trial_template=trial_template,
             metrics_collector_spec=metrics_collector,
-            max_trial_count=4,
-            parallel_trial_count=2,
-            max_failed_trial_count=2,
+            max_trial_count=args.max_trial_count,
+            parallel_trial_count=args.parallel_trial_count,
+            max_failed_trial_count=args.max_failed_trial_count,
             early_stopping=early_stopping_spec
         )
 
@@ -214,5 +217,11 @@ implementation:
       - {inputValue: algorithm_name}
       - --early_stopping_algorithm
       - {inputValue: early_stopping_algorithm}
+      - --max_trial_count
+      - {inputValue: max_trial_count}
+      - --parallel_trial_count
+      - {inputValue: parallel_trial_count}
+      - --max_failed_trial_count
+      - {inputValue: max_failed_trial_count}
       - --best_hyperparams
       - {outputPath: best_hyperparams}
