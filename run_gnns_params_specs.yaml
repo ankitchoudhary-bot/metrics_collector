@@ -3,7 +3,7 @@ description: Launches a Katib experiment for GNNS using a predefined objective f
 
 inputs:
   - name: parameters_to_tune
-    type: JsonArray
+    type: String
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
 
   - name: objective_metric_name
