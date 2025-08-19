@@ -118,6 +118,15 @@ implementation:
             for p in params_input
         ]
 
+        # Add model_name as a categorical parameter
+        parameters.append(
+            V1beta1ParameterSpec(
+                name="model_name",
+                parameter_type="categorical",
+                feasible_space={"list": ["tgcn", "rgcn", "gat", "gcn"]}
+            )
+        )
+
         metrics_collector = V1beta1MetricsCollectorSpec(
             source={
                 "fileSystemPath": V1beta1FileSystemPath(
@@ -142,13 +151,22 @@ implementation:
         early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name=args.early_stopping_algorithm)
 
         # Dynamic trial template parameters
+        # trial_template = V1beta1TrialTemplate(
+        #     retain=True,
+        #     primary_container_name="training-container",
+        #     trial_parameters=[
+        #         {"name": p["name"], "description": p["name"], "reference": p["name"]}
+        #         for p in params_input
+        #     ],
         trial_template = V1beta1TrialTemplate(
             retain=True,
             primary_container_name="training-container",
             trial_parameters=[
                 {"name": p["name"], "description": p["name"], "reference": p["name"]}
                 for p in params_input
-            ],
+            ] + [
+                {"name": "model_name", "description": "Model name", "reference": "model_name"}
+              ],
             trial_spec={
                 "apiVersion": "batch/v1",
                 "kind": "Job",
@@ -170,7 +188,7 @@ implementation:
                                         ["--" + p["name"], "${trialParameters." + p["name"] + "}"]
                                         for p in params_input
                                     ], []) + [
-                                    "--model_name", args.model_name
+                                    "--model_name", "${trialParameters.model_name}"                                                        #args.model_nam
                                     ],
                                     "resources": {
                                         "limits": {"cpu": "0.5", "memory": "2Gi"}
