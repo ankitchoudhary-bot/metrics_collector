@@ -2,10 +2,10 @@ name: Katib GNNS Tuner
 description: Launches a Katib experiment for GNNS using a predefined objective function.
 
 inputs:
-  - name: model_name
-    type: String
-    default: tgcn
-    description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
+  # - name: model_name
+  #   type: String
+  #   default: tgcn
+  #   description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
     
   - name: parameters_to_tune
     type: String
@@ -150,14 +150,6 @@ implementation:
         algorithm_spec = V1beta1AlgorithmSpec(algorithm_name=args.algorithm_name)
         early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name=args.early_stopping_algorithm)
 
-        # Dynamic trial template parameters
-        # trial_template = V1beta1TrialTemplate(
-        #     retain=True,
-        #     primary_container_name="training-container",
-        #     trial_parameters=[
-        #         {"name": p["name"], "description": p["name"], "reference": p["name"]}
-        #         for p in params_input
-        #     ],
         trial_template = V1beta1TrialTemplate(
             retain=True,
             primary_container_name="training-container",
@@ -227,7 +219,11 @@ implementation:
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
-        hp_dict = {p.name: float(p.value) for p in params}
+        # hp_dict = {p.name: float(p.value) for p in params}
+        hp_dict = {
+          p.name: (float(p.value) if p.value.replace('.', '', 1).isdigit() else p.value)
+          for p in params
+        }
         print("Best Hyperparameters Found:", hp_dict)
 
         dir_path = os.path.dirname(args.best_hyperparams)
@@ -237,8 +233,8 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
     args:
-      - --model_name
-      - {inputValue: model_name}
+      # - --model_name
+      # - {inputValue: model_name}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
