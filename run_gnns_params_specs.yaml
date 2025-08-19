@@ -148,7 +148,7 @@ implementation:
             trial_parameters=[
                 {"name": p["name"], "description": p["name"], "reference": p["name"]}
                 for p in params_input
-             ],
+            ],
             trial_spec={
                 "apiVersion": "batch/v1",
                 "kind": "Job",
