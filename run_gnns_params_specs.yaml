@@ -101,7 +101,7 @@ implementation:
         parser.add_argument("--parallel_trial_count", type=int, required=True)
         parser.add_argument("--max_failed_trial_count", type=int, required=True)
         parser.add_argument("--experiment_name", type=str, required=True)
-        parser.add_argument("--model_name", type=str, required=True)
+        # parser.add_argument("--model_name", type=str, required=True)
         
         args = parser.parse_args()
 
