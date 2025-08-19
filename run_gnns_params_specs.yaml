@@ -218,6 +218,8 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
     args:
+      - --model_name
+      - {inputValue: model_name}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
