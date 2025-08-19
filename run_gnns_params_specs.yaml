@@ -209,11 +209,11 @@ implementation:
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
-        # hp_dict = {p.name: float(p.value) for p in params}
-        hp_dict = {
-          p.name: (float(p.value) if p.value.replace('.', '', 1).isdigit() else p.value)
-          for p in params
-        }
+        hp_dict = {p.name: float(p.value) for p in params}
+        # hp_dict = {
+        #   p.name: (float(p.value) if p.value.replace('.', '', 1).isdigit() else p.value)
+        #   for p in params
+        # }
         print("Best Hyperparameters Found:", hp_dict)
 
         dir_path = os.path.dirname(args.best_hyperparams)
@@ -223,8 +223,8 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
     args:
-      # - --model_name
-      # - {inputValue: model_name}
+      - --model_name
+      - {inputValue: model_name}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
