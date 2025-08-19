@@ -2,6 +2,11 @@ name: Katib GNNS Tuner
 description: Launches a Katib experiment for GNNS using a predefined objective function.
 
 inputs:
+  - name: model_name
+    type: String
+    default: tgcn
+    description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
+    
   - name: parameters_to_tune
     type: String
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
@@ -163,7 +168,9 @@ implementation:
                                     "args": sum([
                                         ["--" + p["name"], "${trialParameters." + p["name"] + "}"]
                                         for p in params_input
-                                    ], []),
+                                    ], []) + [
+                                    "--model_name", args.model_name
+                                    ],
                                     "resources": {
                                         "limits": {"cpu": "0.5", "memory": "2Gi"}
                                     }
