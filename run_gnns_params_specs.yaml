@@ -2,10 +2,10 @@ name: Katib GNNS Tuner
 description: Launches a Katib experiment for GNNS using a predefined objective function.
 
 inputs:
-  # - name: model_name
-  #   type: String
-  #   default: tgcn
-  #   description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
+  - name: model_name
+    type: String
+    default: tgcn
+    description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
     
   - name: parameters_to_tune
     type: String
@@ -101,7 +101,7 @@ implementation:
         parser.add_argument("--parallel_trial_count", type=int, required=True)
         parser.add_argument("--max_failed_trial_count", type=int, required=True)
         parser.add_argument("--experiment_name", type=str, required=True)
-        # parser.add_argument("--model_name", type=str, required=True)
+        parser.add_argument("--model_name", type=str, required=True)
         
         args = parser.parse_args()
 
@@ -117,15 +117,6 @@ implementation:
             )
             for p in params_input
         ]
-
-        # Add model_name as a categorical parameter
-        parameters.append(
-            V1beta1ParameterSpec(
-                name="model_name",
-                parameter_type="categorical",
-                feasible_space={"list": ["tgcn", "rgcn", "gat", "gcn"]}
-            )
-        )
 
         metrics_collector = V1beta1MetricsCollectorSpec(
             source={
@@ -150,15 +141,14 @@ implementation:
         algorithm_spec = V1beta1AlgorithmSpec(algorithm_name=args.algorithm_name)
         early_stopping_spec = V1beta1EarlyStoppingSpec(algorithm_name=args.early_stopping_algorithm)
 
+        # Dynamic trial template parameters
         trial_template = V1beta1TrialTemplate(
             retain=True,
             primary_container_name="training-container",
             trial_parameters=[
                 {"name": p["name"], "description": p["name"], "reference": p["name"]}
                 for p in params_input
-            ] + [
-                {"name": "model_name", "description": "Model name", "reference": "model_name"}
-              ],
+             ],
             trial_spec={
                 "apiVersion": "batch/v1",
                 "kind": "Job",
@@ -180,7 +170,7 @@ implementation:
                                         ["--" + p["name"], "${trialParameters." + p["name"] + "}"]
                                         for p in params_input
                                     ], []) + [
-                                    "--model_name", "${trialParameters.model_name}"                                                        #args.model_nam
+                                    "--model_name", args.model_name
                                     ],
                                     "resources": {
                                         "limits": {"cpu": "0.5", "memory": "2Gi"}
