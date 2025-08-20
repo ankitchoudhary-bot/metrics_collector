@@ -173,7 +173,7 @@ implementation:
                                     "--model_name", args.model_name
                                     ],
                                     "resources": {
-                                        "limits": {"cpu": "0.5", "memory": "2Gi"}
+                                        "limits": {"cpu": "4", "memory": "4Gi"}
                                     }
                                 }
                             ],
