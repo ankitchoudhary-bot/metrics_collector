@@ -231,8 +231,8 @@ implementation:
     args:
       - --model_name
       - {inputValue: model_name}
-      - --dataset_path
-      - {inputPath: dataset_path}
+      - --processed_data_zip
+      - {inputPath: processed_data_zip}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
