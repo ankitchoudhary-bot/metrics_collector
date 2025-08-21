@@ -7,7 +7,7 @@ inputs:
     default: tgcn
     description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
 
-  - name: processed_data_zip
+  - name: elliptic_data
     type: Dataset
     description: Path or identifier of the dataset to load
 
@@ -106,7 +106,7 @@ implementation:
         parser.add_argument("--max_failed_trial_count", type=int, required=True)
         parser.add_argument("--experiment_name", type=str, required=True)
         parser.add_argument("--model_name", type=str, required=True)
-        parser.add_argument("--processed_data_zip", type=str, required=True)
+        parser.add_argument("--elliptic_data", type=str, required=True)
         
         args = parser.parse_args()
 
@@ -176,7 +176,7 @@ implementation:
                                         for p in params_input
                                     ], []) + [
                                     "--model_name", args.model_name,
-                                    "--dataset_path", args.dataset_path
+                                    "--elliptic_data", args.elliptic_data
                                     ],
                                     "resources": {
                                         "limits": {"cpu": "4", "memory": "4Gi"}
@@ -231,7 +231,7 @@ implementation:
     args:
       - --model_name
       - {inputValue: model_name}
-      - --processed_data_zip
+      - --elliptic_data
       - {inputPath: processed_data_zip}
       - --experiment_name
       - {inputValue: experiment_name}
