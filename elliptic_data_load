@@ -1,0 +1,54 @@
+name: Load Elliptic Bitcoin Dataset
+description: Loads the EllipticBitcoinDataset and saves it as a Dataset type.
+outputs:
+  - {name: elliptic_data, type: Dataset}
+implementation:
+  container:
+    image: python:3.9
+    command:
+      - sh
+      - -c
+      - |
+        PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet torch torchvision torchaudio torch_geometric pandas || \
+        PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet torch torchvision torchaudio torch_geometric pandas --user
+        exec "$0" "$@"
+      - python3
+      - -u
+      - -c
+      - |
+        import argparse
+        import os
+        import pickle
+        import torch
+        from torch_geometric.datasets import EllipticBitcoinDataset
+        
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--elliptic_data', type=str, required=True)
+        
+        args = parser.parse_args()
+        
+        print(f"[INFO] Loading Elliptic Bitcoin Dataset...")
+        dataset = EllipticBitcoinDataset(root='/tmp/elliptic')
+        data = dataset[0]
+        
+        print(f"[INFO] Dataset loaded successfully")
+        print(f"[INFO] Number of nodes: {data.x.shape[0]}")
+        print(f"[INFO] Number of edges: {data.edge_index.shape[1]}")
+        print(f"[INFO] Number of features: {data.x.shape[1]}")
+        print(f"[INFO] Unique labels: {torch.unique(data.y)}")
+        
+        # Ensure output directory
+        os.makedirs(os.path.dirname(args.elliptic_data), exist_ok=True)
+        
+        # Save the entire data object using pickle
+        out_file = os.path.join(args.elliptic_data, "data.pkl")
+        with open(out_file, "wb") as f:
+            pickle.dump(data, f)
+
+        with open(args.elliptic_data, "wb") as f: pickle.dump(data, f)
+        
+        print(f"[SUCCESS] Saved elliptic dataset to {args.elliptic_data}")
+        
+    args:
+      - --elliptic_data
+      - {outputPath: elliptic_data}
