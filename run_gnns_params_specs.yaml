@@ -6,7 +6,11 @@ inputs:
     type: String
     default: tgcn
     description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
-    
+
+  - name: dataset_path
+    type: String
+    description: Path or identifier of the dataset to load
+
   - name: parameters_to_tune
     type: String
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
@@ -170,7 +174,8 @@ implementation:
                                         ["--" + p["name"], "${trialParameters." + p["name"] + "}"]
                                         for p in params_input
                                     ], []) + [
-                                    "--model_name", args.model_name
+                                    "--model_name", args.model_name,
+                                    "--dataset_path", args.dataset_path
                                     ],
                                     "resources": {
                                         "limits": {"cpu": "4", "memory": "4Gi"}
