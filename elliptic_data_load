@@ -45,7 +45,7 @@ implementation:
         with open(out_file, "wb") as f:
             pickle.dump(data, f)
 
-        with open(args.elliptic_data, "wb") as f: pickle.dump(data, f)
+        # with open(args.elliptic_data, "wb") as f: pickle.dump(data, f)
         
         print(f"[SUCCESS] Saved elliptic dataset to {args.elliptic_data}")
         
