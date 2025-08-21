@@ -8,7 +8,7 @@ inputs:
     description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
 
   - name: dataset_path
-    type: String
+    type: Dataset
     description: Path or identifier of the dataset to load
 
   - name: parameters_to_tune
