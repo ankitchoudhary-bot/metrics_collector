@@ -232,7 +232,7 @@ implementation:
       - --model_name
       - {inputValue: model_name}
       - --elliptic_data
-      - {inputPath: processed_data_zip}
+      - {inputPath: elliptic_data}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
