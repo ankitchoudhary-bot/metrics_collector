@@ -360,6 +360,20 @@ implementation:
         parser.add_argument("--model_name", type=str, required=True)
         parser.add_argument("--elliptic_data", type=str, required=True)
 
+        # Resolve MinIO URI from inputPath
+        local_dataset_path = args.elliptic_data
+        
+        # Elyra/KFP mounted path looks like: /tmp/inputs/elliptic_data/data
+        # The corresponding MinIO object is already stored in the artifact store
+        # Trick: Build a MinIO URI manually
+        dataset_filename = os.path.basename(local_dataset_path.rstrip("/"))
+        minio_uri = f"minio://mlpipeline/{dataset_filename}"
+        
+        # Overwrite args.elliptic_data so Katib trialTemplate sees MinIO URL
+        args.elliptic_data = minio_uri
+        print("[INFO] Resolved dataset:", local_dataset_path, "->", args.elliptic_data)
+
+
         args = parser.parse_args()
         params_input = json.loads(args.parameters_to_tune)
 
@@ -480,7 +494,7 @@ implementation:
       - --model_name
       - {inputValue: model_name}
       - --elliptic_data
-      - {inputUri: elliptic_data}
+      - {inputPath: elliptic_data}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
