@@ -213,7 +213,8 @@ implementation:
         )
 
         katib_client.create_experiment(experiment)
-        katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
+        tuning_params=katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
+        print(tuning_params)
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
@@ -230,20 +231,11 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
 
-        trials = katib_client.list_trials(name="katib-experiment", namespace=namespace)
-
-        all_payloads = []
-        for t in trials.items:
-            params = {p.name: p.value for p in t.spec.parameter_assignments}
-            metrics = {m.name: m.latest for m in t.status.observation.metrics}
-            all_payloads.append({"params": params, "metrics": metrics})
-
-        print(all_payloads)
         
-        # Save for next brick
-        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
-        with open(args.payload, "w") as f:
-            json.dump(all_payloads, f)
+        # # Save for next brick
+        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        # with open(args.payload, "w") as f:
+        #     json.dump(all_payloads, f)
 
     args:
       - --model_name
