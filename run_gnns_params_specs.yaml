@@ -228,6 +228,7 @@ implementation:
             {p.name: float(p.value) for p in t.spec.parameter_assignments}
             for t in trials
         ]
+        print(trial_params_list)
 
         with open(args.payload, "w") as f:
             json.dump(trial_params_list, f)
