@@ -214,8 +214,28 @@ implementation:
 
         katib_client.create_experiment(experiment)
         tuning_params=katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
-        print(tuning_params)
+        # Access current optimal trial
+        current_optimal_trial = tuning_params.status.current_optimal_trial
+        
+        # Extract parameters
+        params = {p.name: p.value for p in current_optimal_trial.parameter_assignments}
+        # Extract metrics
+        metrics = [
+            {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
+            for m in best.observation.metrics
+        ]
+        print(params)
 
+        # trial_params = {
+        #     "learning_rate": args.learning_rate,
+        #     "dropout": args.dropout,
+        #     "hidden_dim": args.hidden_dim
+        # }
+
+         payload = {
+            "data": [params]
+        }
+        
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
         hp_dict = {p.name: float(p.value) for p in params}
@@ -232,10 +252,10 @@ implementation:
             json.dump(hp_dict, f, indent=2)
 
         
-        # # Save for next brick
-        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
-        # with open(args.payload, "w") as f:
-        #     json.dump(all_payloads, f)
+        # Save for next brick
+        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        with open(args.payload, "w") as f:
+            json.dump(payloads, f)
 
     args:
       - --model_name
