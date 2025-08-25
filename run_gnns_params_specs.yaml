@@ -262,4 +262,4 @@ implementation:
       - --best_hyperparams
       - {outputPath: best_hyperparams}
       - --payload
-      - {outputValue: payload}
+      - {outputPath: payload}
