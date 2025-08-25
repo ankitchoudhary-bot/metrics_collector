@@ -59,7 +59,7 @@ outputs:
     description: Best parameter set found by Katib
 
   - name: payload
-    type: String
+    type: string
     description: Parameters tuning
   
 
