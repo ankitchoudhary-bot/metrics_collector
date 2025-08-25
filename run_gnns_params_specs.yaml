@@ -230,7 +230,7 @@ implementation:
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
 
-        trials = katib_client.list_trials(name="katib-experiment, namespace=namespace)
+        trials = katib_client.list_trials(name="katib-experiment", namespace=namespace)
 
         all_payloads = []
         for t in trials.items:
