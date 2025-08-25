@@ -222,7 +222,7 @@ implementation:
         # Extract metrics
         metrics = [
             {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
-            for m in best.observation.metrics
+            for m in current_optimal_trial.observation.metrics
         ]
         print(params)
 
