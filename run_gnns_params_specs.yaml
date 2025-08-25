@@ -223,23 +223,28 @@ implementation:
         #   for p in params
         # }
         print("Best Hyperparameters Found:", hp_dict)
-        trials = katib_client.get_experiment_trials(name=experiment_name, namespace=namespace)
-        trial_params_list = [
-            {p.name: float(p.value) for p in t.spec.parameter_assignments}
-            for t in trials
-        ]
-        print(trial_params_list)
-
-        with open(args.payload, "w") as f:
-            json.dump(trial_params_list, f)
-
-
         dir_path = os.path.dirname(args.best_hyperparams)
         if dir_path:
             os.makedirs(dir_path, exist_ok=True)
 
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
+
+        trials = katib_client.list_trials(name="katib-experiment, namespace=namespace)
+
+        all_payloads = []
+        for t in trials.items:
+            params = {p.name: p.value for p in t.spec.parameter_assignments}
+            metrics = {m.name: m.latest for m in t.status.observation.metrics}
+            all_payloads.append({"params": params, "metrics": metrics})
+
+        print(all_payloads)
+        
+        # Save for next brick
+        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        with open(args.payload, "w") as f:
+            json.dump(all_payloads, f)
+
     args:
       - --model_name
       - {inputValue: model_name}
