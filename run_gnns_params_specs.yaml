@@ -217,13 +217,27 @@ implementation:
             spec=experiment_spec
         )
 
+        def auto_cast(value: str):
+          """Cast Katib param string into int, float, bool, or keep as string."""
+          # Handle bool
+          if value.lower() in ["true", "false"]:
+              return value.lower() == "true"
+          # Handle int
+          if value.isdigit() or (value.startswith('-') and value[1:].isdigit()):
+              return int(value)
+          # Handle float
+          try:
+              return float(value)
+          except ValueError:
+              return value  # fallback: str
+
         katib_client.create_experiment(experiment)
         tuning_params=katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
         # Access current optimal trial
         current_optimal_trial = tuning_params.status.current_optimal_trial
         
         # Extract parameters
-        params = {p.name: p.value for p in current_optimal_trial.parameter_assignments}
+        params = {p.name: auto_cast(p.value) for p in current_optimal_trial.parameter_assignments}
         params["model_name"] = args.model_name 
         params["model_type"] = args.model_type  
 
