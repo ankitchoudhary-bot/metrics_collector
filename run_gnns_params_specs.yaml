@@ -229,8 +229,8 @@ implementation:
             for t in trials
         ]
 
-with open(args.payload, "w") as f:
-    json.dump(trial_params_list, f)
+        with open(args.payload, "w") as f:
+            json.dump(trial_params_list, f)
 
 
         dir_path = os.path.dirname(args.best_hyperparams)
