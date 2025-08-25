@@ -224,6 +224,10 @@ implementation:
         # }
         print("Best Hyperparameters Found:", hp_dict)
 
+        with open(args.payload, "w") as f:
+          json.dump(params_input, f)
+
+
         dir_path = os.path.dirname(args.best_hyperparams)
         if dir_path:
             os.makedirs(dir_path, exist_ok=True)
