@@ -223,9 +223,14 @@ implementation:
         #   for p in params
         # }
         print("Best Hyperparameters Found:", hp_dict)
+        trials = katib_client.get_experiment_trials(name=experiment_name, namespace=namespace)
+        trial_params_list = [
+            {p.name: float(p.value) for p in t.spec.parameter_assignments}
+            for t in trials
+        ]
 
-        with open(args.payload, "w") as f:
-          json.dump(params_input, f)
+with open(args.payload, "w") as f:
+    json.dump(trial_params_list, f)
 
 
         dir_path = os.path.dirname(args.best_hyperparams)
