@@ -232,7 +232,7 @@ implementation:
         #     "hidden_dim": args.hidden_dim
         # }
 
-         payload = {
+        payload = {
             "data": [params]
         }
         
