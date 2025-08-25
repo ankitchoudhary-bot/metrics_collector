@@ -6,6 +6,11 @@ inputs:
     type: String
     default: tgcn
     description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
+
+  - name: model_type
+    type: String
+    default: gnns
+    description: Type of model(e.g., gnn, ml, xgboost etc)
     
   - name: parameters_to_tune
     type: String
@@ -108,7 +113,7 @@ implementation:
         parser.add_argument("--experiment_name", type=str, required=True)
         parser.add_argument("--model_name", type=str, required=True)
         parser.add_argument("--payload", type=str, required=True)
-        
+        parser.add_argument("--model_type", type=str, required=True)
         
         args = parser.parse_args()
 
@@ -219,6 +224,9 @@ implementation:
         
         # Extract parameters
         params = {p.name: p.value for p in current_optimal_trial.parameter_assignments}
+        params["model_name"] = args.model_name 
+        params["model_type"] = args.model_type  
+
         # Extract metrics
         metrics = [
             {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
@@ -260,8 +268,8 @@ implementation:
     args:
       - --model_name
       - {inputValue: model_name}
-      # - --elliptic_data
-      # - {inputPath: elliptic_data}
+      - --model_type
+      - {inputValue: model_type}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
