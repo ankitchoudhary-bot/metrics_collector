@@ -6,11 +6,7 @@ inputs:
     type: String
     default: tgcn
     description: Name of the GNN model to train (e.g., tgcn, gat, rgcn)
-
-  # - name: elliptic_data
-  #   type: Dataset
-  #   description: Path or identifier of the dataset to load
-
+    
   - name: parameters_to_tune
     type: String
     description: List of parameter specs to tune (Katib V1beta1ParameterSpec format)
@@ -62,6 +58,11 @@ outputs:
     type: JsonArray
     description: Best parameter set found by Katib
 
+  - name: payload
+    type: String
+    description: Parameters tuning
+  
+
 implementation:
   container:
     image: ankitdockerhubprofile/gnns_tgcn_image:latest
@@ -106,7 +107,8 @@ implementation:
         parser.add_argument("--max_failed_trial_count", type=int, required=True)
         parser.add_argument("--experiment_name", type=str, required=True)
         parser.add_argument("--model_name", type=str, required=True)
-        # parser.add_argument("--elliptic_data", type=str, required=True)
+        parser.add_argument("--payload", type=str, required=True)
+        
         
         args = parser.parse_args()
 
@@ -255,3 +257,5 @@ implementation:
       - {inputValue: max_failed_trial_count}
       - --best_hyperparams
       - {outputPath: best_hyperparams}
+      - --payload
+      - {outputValue: payload}
