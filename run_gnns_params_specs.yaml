@@ -249,34 +249,34 @@ implementation:
         print(params)
         params["metrics"]=metrics
 
-        # payload = {
-        #     "data": [params]
-        # }
+        payload = {
+            "data": [params]
+        }
 
-        # # Save for next brick
-        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
-        # with open(args.payload, "w") as f:
-        #     json.dump(payload, f)
+        # Save for next brick
+        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        with open(args.payload, "w") as f:
+            json.dump(payload, f)
 
         # Save for next brick (append instead of overwrite)
-        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
         
-        # Initialize wrapper
-        payload = {"data": []}
+        # # Initialize wrapper
+        # payload = {"data": []}
         
-        if os.path.exists(args.payload):
-            with open(args.payload, "r") as f:
-                try:
-                    payload = json.load(f)   # load existing {"data": [...]}
-                except json.JSONDecodeError:
-                    payload = {"data": []}
+        # if os.path.exists(args.payload):
+        #     with open(args.payload, "r") as f:
+        #         try:
+        #             payload = json.load(f)   # load existing {"data": [...]}
+        #         except json.JSONDecodeError:
+        #             payload = {"data": []}
         
-        # append new params directly into "data" list
-        payload["data"].append(params)
+        # # append new params directly into "data" list
+        # payload["data"].append(params)
 
-        # write back
-        with open(args.payload, "w") as f:
-            json.dump(payload, f, indent=4)
+        # # write back
+        # with open(args.payload, "w") as f:
+        #     json.dump(payload, f, indent=4)
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
