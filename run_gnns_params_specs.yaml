@@ -251,11 +251,11 @@ implementation:
 
         # Extract metrics
         metrics = [
-            {"name": m.name, "latest": str(m.latest), "max": str(m.max), "min": str(m.min)}
+            {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
             for m in current_optimal_trial.observation.metrics
         ]
 
-        params["metrics"]=metrics
+        params["metrics"]=str(metrics)
         print(params)
         payload = {
             "data": [params]
