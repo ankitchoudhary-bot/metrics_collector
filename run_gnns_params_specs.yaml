@@ -254,9 +254,9 @@ implementation:
             {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
             for m in current_optimal_trial.observation.metrics
         ]
-        print(params)
-        params["metrics"]=metrics
 
+        params["metrics"]=metrics
+        print(params)
         payload = {
             "data": [params]
         }
