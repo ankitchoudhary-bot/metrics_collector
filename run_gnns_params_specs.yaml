@@ -248,15 +248,33 @@ implementation:
         ]
         print(params)
 
-        # trial_params = {
-        #     "learning_rate": args.learning_rate,
-        #     "dropout": args.dropout,
-        #     "hidden_dim": args.hidden_dim
-        # }
-
         payload = {
             "data": [params]
         }
+
+        # # Save for next brick
+        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        # with open(args.payload, "w") as f:
+        #     json.dump(payload, f)
+
+        # Save for next brick (append instead of overwrite)
+        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
+        
+        data = []
+        if os.path.exists(args.payload):
+            with open(args.payload, "r") as f:
+                try:
+                    data = json.load(f)   # load existing list
+                except json.JSONDecodeError:
+                    data = []
+
+        # append new payload
+        data.append(payload)
+        
+        # write back full list
+        with open(args.payload, "w") as f:
+            json.dump(data, f, indent=4)
+
         
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
@@ -272,12 +290,6 @@ implementation:
 
         with open(args.best_hyperparams, "w") as f:
             json.dump(hp_dict, f, indent=2)
-
-        
-        # Save for next brick
-        os.makedirs(os.path.dirname(args.payload), exist_ok=True)
-        with open(args.payload, "w") as f:
-            json.dump(payload, f)
 
     args:
       - --model_name
