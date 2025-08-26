@@ -11,6 +11,14 @@ inputs:
     type: String
     default: gnns
     description: Type of model(e.g., gnn, ml, xgboost etc)
+
+  # - name: process_data_url
+  #   type: string
+  #   description: URL to fetch the dataset (pickle) from.
+
+  # - name: weights_url
+  #   type: String
+  #   description: Path to fetch weights JSON from.
     
   - name: parameters_to_tune
     type: String
