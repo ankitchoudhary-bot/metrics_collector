@@ -248,9 +248,9 @@ implementation:
         ]
         print(params)
 
-        payload = {
-            "data": [params]
-        }
+        # payload = {
+        #     "data": [params]
+        # }
 
         # # Save for next brick
         # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
@@ -260,22 +260,23 @@ implementation:
         # Save for next brick (append instead of overwrite)
         os.makedirs(os.path.dirname(args.payload), exist_ok=True)
         
-        data = []
+        # Initialize wrapper
+        data = {"data": []}
+        
         if os.path.exists(args.payload):
             with open(args.payload, "r") as f:
                 try:
-                    data = json.load(f)   # load existing list
+                    data = json.load(f)   # load existing {"data": [...]}
                 except json.JSONDecodeError:
-                    data = []
-
-        # append new payload
-        data.append(payload)
+                    data = {"data": []}
         
-        # write back full list
+        # append new params directly into "data" list
+        data["data"].append(params)
+
+        # write back
         with open(args.payload, "w") as f:
             json.dump(data, f, indent=4)
 
-        
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
         hp_dict = {p.name: float(p.value) for p in params}
