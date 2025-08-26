@@ -261,21 +261,21 @@ implementation:
         os.makedirs(os.path.dirname(args.payload), exist_ok=True)
         
         # Initialize wrapper
-        data = {"data": []}
+        payload = {"data": []}
         
         if os.path.exists(args.payload):
             with open(args.payload, "r") as f:
                 try:
-                    data = json.load(f)   # load existing {"data": [...]}
+                    payload = json.load(f)   # load existing {"data": [...]}
                 except json.JSONDecodeError:
-                    data = {"data": []}
+                    payload = {"data": []}
         
         # append new params directly into "data" list
-        data["data"].append(params)
+        payload["data"].append(params)
 
         # write back
         with open(args.payload, "w") as f:
-            json.dump(data, f, indent=4)
+            json.dump(payload, f, indent=4)
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
