@@ -247,6 +247,7 @@ implementation:
             for m in current_optimal_trial.observation.metrics
         ]
         print(params)
+        params["metrics"]=metrics
 
         # payload = {
         #     "data": [params]
