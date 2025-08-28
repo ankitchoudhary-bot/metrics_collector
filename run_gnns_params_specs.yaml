@@ -260,11 +260,13 @@ implementation:
         
             # Add metrics
             if trial.status.observation and trial.status.observation.metrics:
-                paramss["metrics"] = {}
+                metrics_dict = {}
                 for metric in trial.status.observation.metrics:
-                    paramss["metrics"][metric.name] = auto_cast(metric.latest)
+                    metrics_dict[metric.name] = auto_cast(metric.latest)
+                # Save metrics as JSON string
+                paramss["metrics"] = json.dumps(metrics_dict)
             else:
-                print("No metrics reported yet.")
+                paramss["metrics"] = None
         
             payload_data.append(paramss)
               
