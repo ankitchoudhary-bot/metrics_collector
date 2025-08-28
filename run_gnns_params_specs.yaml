@@ -269,7 +269,7 @@ implementation:
             payload_data.append(paramss)
               
         payload = {
-            "data": payload
+            "data": payload_data
         }
 
         # Save for next brick
