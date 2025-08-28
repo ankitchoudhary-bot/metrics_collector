@@ -257,14 +257,13 @@ implementation:
             # Add hyperparameters
             for param in trial.spec.parameter_assignments:
                 paramss[param.name] = auto_cast(param.value)
-        
             # Add metrics
             if trial.status.observation and trial.status.observation.metrics:
-                metrics_dict = {}
+                metrics_list = []
                 for metric in trial.status.observation.metrics:
-                    metrics_dict[metric.name] = auto_cast(metric.latest)
+                    metrics_list.append({metric.name: auto_cast(metric.latest)}
                 # Save metrics as JSON string
-                paramss["metrics"] = json.dumps(metrics_dict)
+                paramss["metrics"] = str(metrics_list)
             else:
                 paramss["metrics"] = None
         
