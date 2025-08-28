@@ -240,51 +240,42 @@ implementation:
               return value  # fallback: str
 
         katib_client.create_experiment(experiment)
-        tuning_params=katib_client.wait_for_experiment_condition(name=experiment_name, namespace=namespace, timeout=3600)
-        # Access current optimal trial
-        current_optimal_trial = tuning_params.status.current_optimal_trial
+
+        # Get the experiment object
+        # exp = katib_client.get_experiment(experiment_name, namespace)
         
-        # Extract parameters
-        params = {p.name: auto_cast(p.value) for p in current_optimal_trial.parameter_assignments}
-        params["model_name"] = args.model_name 
-        params["model_type"] = args.model_type  
+        # Fetch all trials for this experiment
+        trials = katib_client.list_trials(experiment_name, namespace)
 
-        # Extract metrics
-        metrics = [
-            {"name": m.name, "latest": m.latest, "max": m.max, "min": m.min}
-            for m in current_optimal_trial.observation.metrics
-        ]
+        payload_data = []   # list to hold all trial results
 
-        params["metrics"]=str(metrics)
-        print(params)
+        for trial in trials:
+            paramss = {}
+            paramss['model_name'] = args.model_name
+            paramss['model_type'] = args.model_type
+            
+            # Add hyperparameters
+            for param in trial.spec.parameter_assignments:
+                paramss[param.name] = auto_cast(param.value)
+        
+            # Add metrics
+            if trial.status.observation and trial.status.observation.metrics:
+                paramss["metrics"] = {}
+                for metric in trial.status.observation.metrics:
+                    paramss["metrics"][metric.name] = auto_cast(metric.latest)
+            else:
+                print("No metrics reported yet.")
+        
+            payload_data.append(paramss)
+              
         payload = {
-            "data": [params]
+            "data": payload
         }
 
         # Save for next brick
         os.makedirs(os.path.dirname(args.payload), exist_ok=True)
         with open(args.payload, "w") as f:
             json.dump(payload, f)
-
-        # Save for next brick (append instead of overwrite)
-        # os.makedirs(os.path.dirname(args.payload), exist_ok=True)
-        
-        # # Initialize wrapper
-        # payload = {"data": []}
-        
-        # if os.path.exists(args.payload):
-        #     with open(args.payload, "r") as f:
-        #         try:
-        #             payload = json.load(f)   # load existing {"data": [...]}
-        #         except json.JSONDecodeError:
-        #             payload = {"data": []}
-        
-        # # append new params directly into "data" list
-        # payload["data"].append(params)
-
-        # # write back
-        # with open(args.payload, "w") as f:
-        #     json.dump(payload, f, indent=4)
 
         best = katib_client.get_optimal_hyperparameters(name=experiment_name, namespace=namespace)
         params = best.parameter_assignments
