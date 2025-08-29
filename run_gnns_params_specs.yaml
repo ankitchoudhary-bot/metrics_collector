@@ -249,9 +249,9 @@ implementation:
 
         payload_data = []   # list to hold all trial results
 
-        for trial in trials:
+        for idx, trial in enumerate(trials, start=1):
             paramss = {}
-            paramss['model_name'] = args.model_name
+            paramss['model_name'] = f"{args.model_name}_trial{idx}"
             paramss['model_type'] = args.model_type
             
             # Add hyperparameters
