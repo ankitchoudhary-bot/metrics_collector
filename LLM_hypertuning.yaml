@@ -75,12 +75,12 @@ implementation:
             objective_metric_name="train_loss",
             objective_type="minimize",
             algorithm_name="random",
-            max_trial_count=1,
-            parallel_trial_count=1,
+            max_trial_count=4,
+            parallel_trial_count=2,
             resources_per_trial=katib.TrainerResources(
                 num_workers=1,
                 num_procs_per_worker=1,
-                resources_per_worker={"gpu": 2, "cpu": 2, "memory": "4G"},
+                resources_per_worker={"gpu": 2, "cpu": 8, "memory": "10G"},
             ),
         )
 
