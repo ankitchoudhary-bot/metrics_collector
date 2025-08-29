@@ -64,7 +64,7 @@ implementation:
         )
 
         # Katib Client
-        cl = KatibClient(namespace="kubeflow")
+        cl = KatibClient(namespace="admin")
         exp_name = "llama"
 
         cl.tune(
