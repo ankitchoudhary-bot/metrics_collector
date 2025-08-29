@@ -261,7 +261,7 @@ implementation:
             if trial.status.observation and trial.status.observation.metrics:
                 metrics_list = []
                 for metric in trial.status.observation.metrics:
-                    metrics_list.append({metric.name: auto_cast(metric.latest)}
+                    metrics_list.append({metric.name: auto_cast(metric.latest)})
                 # Save metrics as JSON string
                 paramss["metrics"] = str(metrics_list)
             else:
