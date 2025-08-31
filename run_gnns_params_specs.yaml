@@ -170,9 +170,6 @@ implementation:
             trial_parameters=[
                 {"name": p["name"], "description": p["name"], "reference": p["name"]}
                 for p in params_input
-            ] + [
-                {"name": "process_data_url", "description": "Dataset pickle URL", "reference": "process_data_url"},
-                {"name": "weights_url", "description": "Weights JSON URL", "reference": "weights_url"}
             ],
             trial_spec={
                 "apiVersion": "batch/v1",
@@ -196,8 +193,8 @@ implementation:
                                         for p in params_input
                                     ], []) + [
                                     "--model_name", args.model_name,
-                                    "--process_data_url", "${trialParameters.process_data_url}",
-                                    "--weights_url", "${trialParameters.weights_url}"
+                                    "--process_data_url", args.process_data_url,
+                                    "--weights_url", args.weights_url
                                     # "--elliptic_data", args.elliptic_data
                                     ],
                                     "resources": {
