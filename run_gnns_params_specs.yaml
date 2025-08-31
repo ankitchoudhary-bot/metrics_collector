@@ -13,7 +13,7 @@ inputs:
     description: Type of model(e.g., gnn, ml, xgboost etc)
 
   - name: process_data_url
-    type: string
+    type: String
     description: URL to fetch the dataset (pickle) from.
 
   - name: weights_url
