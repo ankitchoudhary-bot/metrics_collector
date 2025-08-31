@@ -12,13 +12,13 @@ inputs:
     default: gnns
     description: Type of model(e.g., gnn, ml, xgboost etc)
 
-  # - name: process_data_url
-  #   type: string
-  #   description: URL to fetch the dataset (pickle) from.
+  - name: process_data_url
+    type: string
+    description: URL to fetch the dataset (pickle) from.
 
-  # - name: weights_url
-  #   type: String
-  #   description: Path to fetch weights JSON from.
+  - name: weights_url
+    type: String
+    description: Path to fetch weights JSON from.
     
   - name: parameters_to_tune
     type: String
@@ -122,6 +122,8 @@ implementation:
         parser.add_argument("--model_name", type=str, required=True)
         parser.add_argument("--payload", type=str, required=True)
         parser.add_argument("--model_type", type=str, required=True)
+        parser.add_argument("--process_data_url", type=str, required=True)
+        parser.add_argument("--weights_url", type=str, required=True)
         
         args = parser.parse_args()
 
@@ -168,6 +170,9 @@ implementation:
             trial_parameters=[
                 {"name": p["name"], "description": p["name"], "reference": p["name"]}
                 for p in params_input
+            ] + [
+                {"name": "process_data_url", "description": "Dataset pickle URL", "reference": "process_data_url"},
+                {"name": "weights_url", "description": "Weights JSON URL", "reference": "weights_url"}
             ],
             trial_spec={
                 "apiVersion": "batch/v1",
@@ -190,7 +195,9 @@ implementation:
                                         ["--" + p["name"], "${trialParameters." + p["name"] + "}"]
                                         for p in params_input
                                     ], []) + [
-                                    "--model_name", args.model_name
+                                    "--model_name", args.model_name,
+                                    "--process_data_url", "${trialParameters.process_data_url}",
+                                    "--weights_url", "${trialParameters.weights_url}"
                                     # "--elliptic_data", args.elliptic_data
                                     ],
                                     "resources": {
@@ -298,6 +305,10 @@ implementation:
       - {inputValue: model_name}
       - --model_type
       - {inputValue: model_type}
+      - --process_data_url
+      - {inputValue: process_data_url}
+      - --weights_url
+      - {inputValue: weights_url}
       - --experiment_name
       - {inputValue: experiment_name}
       - --parameters_to_tune
